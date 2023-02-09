@@ -47,12 +47,21 @@ const router = new VueRouter({
 	routes,
 });
 
-router.beforeEach((to, from, next) => {
+function wait() {
+	return new Promise((resolve) => {
+		setTimeout(() => {
+			resolve();
+		}, 100);
+	});
+}
+
+router.beforeEach(async (to, from, next) => {
 	if (to.matched.some((record) => record.meta.requiresAuth)) {
 		if (store.getters.isAuthenticated) {
 			next();
 			return;
 		}
+		await wait();
 		next('/login');
 	} else {
 		next();
